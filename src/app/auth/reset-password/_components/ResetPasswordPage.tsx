@@ -107,8 +107,7 @@ export default function SetNewPasswordForm() {
           size="lg"
           className="w-full text-white"
           type="submit"
-          loading={isPending}
-          loadingText="Updating password..."
+          disabled={isPending}
         >
           Reset password
         </Button>

@@ -81,8 +81,7 @@ const ForgotPasswordForm = ({
           size="lg"
           className="w-full text-white"
           type="submit"
-          loading={isPending}
-          loadingText="Sending email..."
+          disabled={isPending}
         >
           Reset password
         </Button>

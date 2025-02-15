@@ -50,6 +50,7 @@ export const resetPasswordSchema = z
   });
 
 export const OtpSchema = z.object({
+  email: z.string().email("Invalid email address"),
   otp: z.string().min(6, "OTP must be 6 digits").max(6, "OTP must be 6 digits"),
 });
 

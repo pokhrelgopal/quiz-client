@@ -6,14 +6,9 @@ import OtpForm from "./_components/OtpForm";
 import PageLoader from "@/components/elements/page-loader";
 
 const Page = () => {
-  const [showOtpForm, setShowOtpForm] = React.useState(false);
   return (
     <Suspense fallback={<PageLoader />}>
-      {showOtpForm ? (
-        <OtpForm />
-      ) : (
-        <LoginForm setShowOtpForm={setShowOtpForm} />
-      )}
+      <LoginForm />
     </Suspense>
   );
 };

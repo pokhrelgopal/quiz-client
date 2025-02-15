@@ -10,9 +10,13 @@ import { useState } from "react";
 import { OtpFormData, OtpSchema } from "@/schemas/auth";
 import FormErrorMessage from "@/components/ui/form-error";
 import { Key } from "iconsax-react";
+import { verifyUser } from "@/lib/api/requests";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 
-export default function OtpForm() {
+export default function OtpForm({ email }: { email: string }) {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -21,22 +25,23 @@ export default function OtpForm() {
     resolver: zodResolver(OtpSchema),
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({ email, otp }: OtpFormData) => verifyUser(email, otp),
+  });
+
   const onSubmit = async (data: OtpFormData) => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
+    mutate(data, {
+      onSuccess: () => {
+        router.push("/auth/login");
+      },
+    });
   };
 
   return (
     <div className="w-sm">
       <div className="flex justify-center mb-5">
         <Logo />
+        {email}
       </div>
       <div className="text-center lg:text-left">
         <h2 className="text-3xl font-bold">Enter Code</h2>
@@ -65,9 +70,9 @@ export default function OtpForm() {
           size="lg"
           className="w-full text-white"
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
         >
-          {isLoading ? "Signing in..." : "Sign In"}
+          {isPending ? "Verifying..." : "Verify"}
         </Button>
 
         <p className="text-center text-sm text-gray-500">

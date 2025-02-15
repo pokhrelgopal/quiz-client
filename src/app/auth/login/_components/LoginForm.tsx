@@ -13,11 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { login } from "@/lib/api/requests/user.requests";
 import { useQuizStore } from "@/store/quiz-store";
 
-export default function LoginForm({
-  setShowOtpForm,
-}: {
-  setShowOtpForm: (value: boolean) => void;
-}) {
+export default function LoginForm() {
   const { showToast } = useToast();
   const router = useRouter();
   const { isRedireted } = useQuizStore();
