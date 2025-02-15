@@ -6,17 +6,16 @@ import { Input } from "@/components/ui/input";
 import Logo from "@/components/ui/logo";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { OtpFormData, OtpSchema } from "@/schemas/auth";
+import { type OtpFormData, OtpSchema } from "@/schemas/auth";
 import FormErrorMessage from "@/components/ui/form-error";
 import { Key } from "iconsax-react";
-import { verifyUser } from "@/lib/api/requests";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { useVerifyMutation } from "@/lib/api/requests/user.requests";
+import { useToast } from "@/hooks/use-toast";
 
 export default function OtpForm({ email }: { email: string }) {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
   const {
     register,
     handleSubmit,
@@ -25,23 +24,29 @@ export default function OtpForm({ email }: { email: string }) {
     resolver: zodResolver(OtpSchema),
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: ({ email, otp }: OtpFormData) => verifyUser(email, otp),
-  });
+  const { mutate, isPending } = useVerifyMutation();
 
   const onSubmit = async (data: OtpFormData) => {
-    mutate(data, {
-      onSuccess: () => {
-        router.push("/auth/login");
-      },
-    });
+    console.log("Form data:", data);
+    mutate(
+      { ...data, email },
+      {
+        onSuccess: () => {
+          showToast("Verification successful. Please login.", "success");
+          router.push("/auth/login");
+        },
+        onError: (error) => {
+          console.error("Verification failed:", error);
+          // Handle the error (e.g., show an error message to the user)
+        },
+      }
+    );
   };
 
   return (
     <div className="w-sm">
       <div className="flex justify-center mb-5">
         <Logo />
-        {email}
       </div>
       <div className="text-center lg:text-left">
         <h2 className="text-3xl font-bold">Enter Code</h2>
@@ -55,7 +60,7 @@ export default function OtpForm({ email }: { email: string }) {
           <div className="relative">
             <Input
               id="otp"
-              type="otp"
+              type="text" // Changed from "otp" to "text"
               placeholder="Enter 6 digit code"
               className="pl-10"
               errorMessage={errors.otp?.message}

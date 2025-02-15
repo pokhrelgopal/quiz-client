@@ -1,19 +1,16 @@
 "use client";
+
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Medal } from "lucide-react";
 import { useGetLeaderboard } from "@/lib/api/requests/quiz.requests";
-import Spinner from "@/components/elements/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Leaderboard = () => {
   const { data, isLoading, isError } = useGetLeaderboard();
 
   if (isLoading) {
-    return (
-      <div className="mt-10">
-        <Spinner />
-      </div>
-    );
+    return <LeaderboardSkeleton />;
   }
 
   if (isError) {
@@ -28,6 +25,7 @@ const Leaderboard = () => {
   if (leaderboardData.length === 0) {
     return null;
   }
+
   return (
     <div className="bg-white overflow-y-scroll scrollbar-hide shadow rounded my-16">
       <div className="bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
@@ -66,9 +64,6 @@ const Leaderboard = () => {
               <p className="text-sm font-medium text-gray-900">
                 {entry.user.fullName}
               </p>
-              <p className="text-sm text-gray-500">
-                {formatDuration(entry.duration)}
-              </p>
             </div>
             <div className="flex-shrink-0 ml-4">
               <p className="text-lg font-semibold text-indigo-600">
@@ -82,20 +77,32 @@ const Leaderboard = () => {
   );
 };
 
-// Helper function to format duration
-const formatDuration = (durationInMs: string) => {
-  const durationInSeconds = Number.parseInt(durationInMs) / 1000;
-  const hours = Math.floor(durationInSeconds / 3600);
-  const minutes = Math.floor((durationInSeconds % 3600) / 60);
-  const seconds = Math.floor(durationInSeconds % 60);
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
-  } else if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  } else {
-    return `${seconds}s`;
-  }
+const LeaderboardSkeleton = () => {
+  return (
+    <div className="bg-white overflow-y-scroll scrollbar-hide shadow rounded my-16">
+      <div className="bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
+        <h2 className="text-2xl font-bold text-white text-center">
+          Leaderboard
+        </h2>
+      </div>
+      <ul className="divide-y divide-gray-200">
+        {[...Array(5)].map((_, index) => (
+          <li key={index} className="flex items-center p-4">
+            <div className="flex-shrink-0 mr-4">
+              <Skeleton className="w-8 h-8 rounded-full" />
+            </div>
+            <Skeleton className="h-10 w-10 rounded-full mr-4" />
+            <div className="flex-grow">
+              <Skeleton className="h-4 w-24 mb-2" />
+            </div>
+            <div className="flex-shrink-0 ml-4">
+              <Skeleton className="h-6 w-12" />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default Leaderboard;

@@ -3,6 +3,13 @@ import { LoginFormData, RegisterFormData } from "@/schemas/auth";
 import { ApiError, ApiResponse } from "@/types/response.types";
 import { userRoutes } from "../routes/user.routes";
 import { UserResponse } from "@/types/user.types";
+import {
+  useMutation,
+  useQueryClient,
+  InvalidateQueryFilters,
+  InvalidateOptions,
+} from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export const register = async (data: RegisterFormData) => {
   try {
@@ -94,4 +101,33 @@ export const resetPassword = async ({
     const err = error as ApiError;
     throw err.response?.data;
   }
+};
+
+export const useVerifyMutation = () => {
+  const router = useRouter();
+  return useMutation({
+    mutationFn: ({ email, otp }: { email: string; otp: string }) =>
+      verifyUser(email, otp),
+    onSuccess: () => {
+      router.push("/auth/login");
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useLogoutMutation = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["me"] as InvalidateQueryFilters);
+      router.push("/");
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 };
