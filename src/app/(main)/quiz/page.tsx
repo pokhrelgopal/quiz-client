@@ -9,7 +9,7 @@ export type State = "landing" | "quiz" | "result" | "leaderboard";
 
 export default function Quiz() {
   const [currentPage, setCurrentPage] = useState<State>("landing");
-  const { questionCount, isCompleted, setIsCompleted } = useQuizStore();
+  const { questionCount, setIsCompleted } = useQuizStore();
 
   useEffect(() => {
     if (questionCount === 50) {

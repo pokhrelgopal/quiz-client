@@ -25,7 +25,7 @@ const Hero = () => {
       initial="initial"
       animate="animate"
       variants={staggerChildren}
-      className="relative bg-white pb-[110px] py-[120px] lg:pt-[150px]"
+      className="relative bg-white pb-[110px] py-[120px] lg:pt-[150px] px-4 md:px-0"
     >
       <div className="container max-w-screen-xl mx-auto">
         <div className="-mx-4 flex flex-wrap">

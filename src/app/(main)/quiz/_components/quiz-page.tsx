@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { me } from "@/lib/api/requests";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Props {
   setCurrentPage: React.Dispatch<React.SetStateAction<State>>;
@@ -43,7 +43,7 @@ export default function QuizPage({ setCurrentPage }: Props) {
   const [showLevelCompleteDialog, setShowLevelCompleteDialog] = useState(false);
   const [showQuizCompleteDialog, setShowQuizCompleteDialog] = useState(false);
 
-  const { data, error, isLoading } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["questions", level],
     queryFn: () => getQuestions(level),
     enabled: !!level,
@@ -66,13 +66,13 @@ export default function QuizPage({ setCurrentPage }: Props) {
     if (questionCount > 0 && questionCount % 10 === 0) {
       if (level < 5) {
         setShowLevelCompleteDialog(true);
-      } else if (questionCount === 10 && level === 5) {
+      } else if (level === 5) {
         setShowQuizCompleteDialog(true);
         setEndTime();
         setIsCompleted();
       }
     }
-  }, [questionCount, level, setIsCompleted]);
+  }, [questionCount, level, setEndTime, setIsCompleted]);
 
   const handleQuestionAnswered = (isCorrect: boolean) => {
     if (isCorrect) {
@@ -86,6 +86,7 @@ export default function QuizPage({ setCurrentPage }: Props) {
       setLevel(level + 1);
       setQuestionCount(0);
       setShowLevelCompleteDialog(false);
+      refetch(); // Refetch questions for the new level
     }
   };
 
@@ -109,7 +110,7 @@ export default function QuizPage({ setCurrentPage }: Props) {
   if (!data?.data.questions) {
     return <div>No questions available.</div>;
   }
-  console.log(user);
+
   return (
     <>
       <QuizQuestion
@@ -122,14 +123,22 @@ export default function QuizPage({ setCurrentPage }: Props) {
         open={showLevelCompleteDialog}
         onOpenChange={setShowLevelCompleteDialog}
       >
-        <DialogContent>
+        <DialogContent className="bg-white">
           <DialogHeader>
-            <DialogTitle>Level {level} Completed!</DialogTitle>
-            <DialogDescription>
-              Congratulations! You've completed level {level}. <br />
-              {user
-                ? " Ready for the next challenge?"
-                : " Log in to continue your progress!"}
+            <div className="flex justify-center">
+              <Image
+                src="/assets/Guzuha-02.jpg"
+                alt="Level Complete"
+                width={200}
+                height={200}
+              />
+            </div>
+            <DialogTitle className="text-xl tracking-wide">
+              Level {level} Completed!
+            </DialogTitle>
+            <DialogDescription className="text-md">
+              🎉 Congratulations
+              <br /> You've completed level {level}. <br />
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -150,11 +159,19 @@ export default function QuizPage({ setCurrentPage }: Props) {
         open={showQuizCompleteDialog}
         onOpenChange={setShowQuizCompleteDialog}
       >
-        <DialogContent>
+        <DialogContent className="bg-white">
           <DialogHeader>
-            <DialogTitle>Quiz Completed!</DialogTitle>
-            <DialogDescription>
-              Congratulations! You've completed all levels of the quiz.
+            <div className="flex justify-center">
+              <Image
+                src="/assets/Guzuha-02.jpg"
+                alt="Level Complete"
+                width={200}
+                height={200}
+              />
+            </div>
+            <DialogTitle className="text-xl">🎉 Congratulations</DialogTitle>
+            <DialogDescription className="text-lg">
+              You've completed all levels of the quiz.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
