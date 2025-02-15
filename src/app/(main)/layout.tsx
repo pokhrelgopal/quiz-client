@@ -4,9 +4,9 @@ import HeroNav from "./_components/HeroNav";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main>
+    <main className="flex flex-col min-h-screen">
       <HeroNav />
-      {children}
+      <article className="grow">{children}</article>
       <Footer />
     </main>
   );

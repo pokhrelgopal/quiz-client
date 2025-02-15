@@ -2,59 +2,72 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginFormData, loginSchema } from "@/schemas/auth";
+import { type RegisterFormData, registerSchema } from "@/schemas/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { login } from "@/lib/api/requests/user.requests";
+import { register as registerUser } from "@/lib/api/requests/user.requests";
 
-export default function LoginForm({
-  setShowOtpForm,
-}: {
-  setShowOtpForm: (value: boolean) => void;
-}) {
+export default function RegisterForm() {
   const { showToast } = useToast();
   const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
   });
 
   const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: login,
+    mutationFn: registerUser,
     onSuccess: (data) => {
-      console.log(data, "data");
       if (!data?.success) {
-        showToast(data?.message || "Something went wrong !", "error");
+        showToast(data?.message || "Something went wrong!", "error");
       }
       if (data?.success) {
-        router.push("/admin/dashboard");
+        showToast("Registration successful!", "success");
+        router.push("/auth/login");
       }
     },
     onError: (error) => {
       console.error(error.message);
-      showToast(error.message || "Something went wrong !", "error");
+      showToast(error.message || "Something went wrong!", "error");
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     mutate(data);
   };
 
   return (
     <div className="w-sm">
       <div className="text-center lg:text-left">
-        <h2 className="text-3xl font-bold mb-8">Welcome to Guhuza Quiz</h2>
+        <h2 className="text-3xl font-bold mb-8">Create an Account</h2>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-2">
+          <label htmlFor="fullName" className="block text-sm font-medium">
+            Full Name
+          </label>
+          <div className="relative">
+            <Input
+              id="fullName"
+              type="text"
+              placeholder="Enter your full name"
+              className="pl-10"
+              errorMessage={errors.fullName?.message}
+              {...register("fullName")}
+              icon={<User strokeWidth={1} size={20} />}
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium">
             Email
@@ -73,16 +86,9 @@ export default function LoginForm({
         </div>
 
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label htmlFor="password" className="block text-sm font-medium">
-              Password
-            </label>
-            <Link href="/auth/forgot-password">
-              <span className="text-[#4F46E5] hover:underline block text-sm mt-2">
-                Forgot password?
-              </span>
-            </Link>
-          </div>
+          <label htmlFor="password" className="block text-sm font-medium">
+            Password
+          </label>
           <div className="relative">
             <Input
               id="password"
@@ -95,21 +101,39 @@ export default function LoginForm({
             />
           </div>
         </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium"
+          >
+            Confirm Password
+          </label>
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              className="pl-10"
+              errorMessage={errors.confirmPassword?.message}
+              {...register("confirmPassword")}
+              icon={<Lock strokeWidth={1} size={20} />}
+            />
+          </div>
+        </div>
+
         <Button
           size={"lg"}
           className="w-full text-white"
           type="submit"
           disabled={isLoading}
         >
-          Sign In
+          Register
         </Button>
         <p className="text-center text-sm text-gray-500">
-          No account yet?{" "}
-          <Link
-            href="/auth/register"
-            className="text-[#4F46E5] hover:underline"
-          >
-            Register
+          Already have an account?{" "}
+          <Link href="/auth/login" className="text-[#4F46E5] hover:underline">
+            Sign in here
           </Link>
         </p>
       </form>

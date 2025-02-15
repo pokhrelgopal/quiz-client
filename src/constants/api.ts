@@ -1,4 +1,4 @@
-export const baseApiUrl = "https://red-pots-bet.loca.lt/api";
+export const baseApiUrl = "http://localhost:5000/api";
 
 export const API_METHODS = {
   GET: "GET",
