@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "www.guhuza.com",
+      },
+      {
+        protocol: "https",
         hostname: "h4vn9728cs.ufs.sh",
       },
       {
