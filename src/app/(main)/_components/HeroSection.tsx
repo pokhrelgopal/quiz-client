@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const Hero = () => {
@@ -9,25 +12,25 @@ const Hero = () => {
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4 lg:w-5/12">
               <div className="hero-content">
-                <h1 className="mb-5 text-4xl font-bold !leading-[1.208] sm:text-[42px] lg:text-[40px] xl:text-5xl">
-                  Interview Live Now{" "}
+                <h1 className="mb-5 text-5xl md:text-7xl font-bold !leading-[1.208]">
+                  Start Quiz with <span className="text-primary">Guhuza</span>
                 </h1>
-                <p className="mb-8 max-w-[480px] text-base text-body-color dark:text-dark-6">
-                  Simply add your resume or job and be instantly connected! We
-                  are not a job board.
+                <p className="mb-8 max-w-[480px] text-body-color dark:text-dark-6">
+                  Start your quiz with Guhuza and test your knowledge with
+                  exciting questions and see how well you score. Ready to begin?
                 </p>
                 <ul className="flex flex-wrap items-center">
                   <li>
-                    <a
-                      href="/quiz"
-                      className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-center text-base font-medium text-white hover:bg-blue-dark lg:px-7"
-                    >
-                      Get Started
-                    </a>
+                    <Link href="/quiz">
+                      <Button>
+                        Get Started
+                        <ArrowUpRight className="inline-block" />
+                      </Button>
+                    </Link>
                   </li>
                 </ul>
                 <div className="clients pt-16">
-                  <h6 className="mb-6 flex items-center text-xs font-normal text-body-color dark:text-dark-6">
+                  <h6 className="mb-6 flex items-center text-xl font-bold text-body-color dark:text-dark-6">
                     Some Of Our Clients
                     <span className="ml-3 inline-block h-px w-8 bg-body-color"></span>
                   </h6>

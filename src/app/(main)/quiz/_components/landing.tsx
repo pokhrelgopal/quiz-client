@@ -3,6 +3,7 @@ import { State } from "../page";
 import { ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuizStore } from "@/store/quiz-store";
+import Image from "next/image";
 
 interface Props {
   setCurrentPage: React.Dispatch<React.SetStateAction<State>>;
@@ -11,12 +12,19 @@ interface Props {
 const QuizLanding = ({ setCurrentPage }: Props) => {
   const { isRedireted, setIsRedirected } = useQuizStore();
   return (
-    <section className="bg-gray-50">
-      <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
+    <section className="grid grid-cols-1 md:grid-cols-3">
+      <div className="mx-auto md:col-span-2 max-w-screen-xl px-4 py-32">
         <div className="mx-auto max-w-xl text-center">
-          <div className="w-fit rounded-full bg-red-400/10 p-6 mb-5 mx-auto">
+          {/* <div className="w-fit rounded-full bg-red-400/10 p-6 mb-5 mx-auto">
             <ClipboardList size={40} />
-          </div>
+          </div> */}
+          <Image
+            src="/assets/Guzuha-02.jpg"
+            alt="Quiz"
+            width={300}
+            height={300}
+            className="mx-auto"
+          />
           <h1 className="text-3xl font-extrabold sm:text-5xl">
             Welcome to
             <strong className="font-extrabold text-red-700">
@@ -50,6 +58,7 @@ const QuizLanding = ({ setCurrentPage }: Props) => {
           </div>
         </div>
       </div>
+      <div>Leaderboard</div>
     </section>
   );
 };

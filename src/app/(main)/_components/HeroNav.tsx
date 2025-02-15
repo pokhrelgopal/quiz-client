@@ -31,7 +31,7 @@ const HeroNav = () => {
 
   return (
     <header className="bg-zinc-700">
-      <div className="mx-auto flex justify-between h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex justify-between h-18 max-w-7xl items-center gap-8">
         <Link className="block text-teal-600" href={"/"}>
           <Logo />
         </Link>
