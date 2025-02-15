@@ -11,14 +11,8 @@ interface ResultPageProps {
 }
 
 export default function ResultPage({ setCurrentPage }: ResultPageProps) {
-  const {
-    questionCount,
-    level,
-    correctAnswers,
-    startTime,
-    endTime,
-    resetQuiz,
-  } = useQuizStore();
+  const { correctAnswers, startTime, endTime, resetQuiz } = useQuizStore();
+  const totalQuestions = 50;
 
   const calculateDuration = () => {
     if (!startTime || !endTime) return "N/A";
@@ -40,10 +34,10 @@ export default function ResultPage({ setCurrentPage }: ResultPageProps) {
 
         <div className="text-center mb-8">
           <p className="text-6xl font-bold mb-2">
-            {((correctAnswers / questionCount) * 100).toFixed(1)}%
+            {((correctAnswers / totalQuestions) * 100).toFixed(1)}%
           </p>
           <p className="text-xl">
-            Final Score: {correctAnswers} out of {questionCount} questions
+            Final Score: {correctAnswers} out of {totalQuestions} questions
           </p>
           <p className="mt-4 text-lg">Time taken: {calculateDuration()}</p>
         </div>

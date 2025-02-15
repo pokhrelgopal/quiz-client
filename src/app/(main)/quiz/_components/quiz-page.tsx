@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { me } from "@/lib/api/requests";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Props {
   setCurrentPage: React.Dispatch<React.SetStateAction<State>>;
@@ -30,24 +31,29 @@ export default function QuizPage({ setCurrentPage }: Props) {
     questionCount,
     startTime,
     incrementQuestionCount,
+    setQuestionCount,
     incrementCorrectAnswers,
     setStartTime,
+    setEndTime,
     setLevel,
     setIsCompleted,
+    setIsRedirected,
   } = useQuizStore();
-
+  const router = useRouter();
   const [showLevelCompleteDialog, setShowLevelCompleteDialog] = useState(false);
   const [showQuizCompleteDialog, setShowQuizCompleteDialog] = useState(false);
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ["me"],
-    queryFn: me,
-    retry: 1,
-  });
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["questions", level],
     queryFn: () => getQuestions(level),
     enabled: !!level,
+  });
+
+  const { data: user, isLoading: userLoading } = useQuery({
+    queryKey: ["me"],
+    queryFn: me,
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   useEffect(() => {
@@ -60,8 +66,9 @@ export default function QuizPage({ setCurrentPage }: Props) {
     if (questionCount > 0 && questionCount % 10 === 0) {
       if (level < 5) {
         setShowLevelCompleteDialog(true);
-      } else if (questionCount === 50) {
+      } else if (questionCount === 10 && level === 5) {
         setShowQuizCompleteDialog(true);
+        setEndTime();
         setIsCompleted();
       }
     }
@@ -75,14 +82,20 @@ export default function QuizPage({ setCurrentPage }: Props) {
   };
 
   const handleContinue = () => {
-    setShowLevelCompleteDialog(false);
     if (level < 5) {
       setLevel(level + 1);
+      setQuestionCount(0);
+      setShowLevelCompleteDialog(false);
     }
   };
 
   const handleQuizComplete = () => {
     setCurrentPage("result");
+  };
+
+  const handleLoginToContinue = () => {
+    setIsRedirected(true);
+    router.push("/auth/login");
   };
 
   if (isLoading) {
@@ -96,7 +109,7 @@ export default function QuizPage({ setCurrentPage }: Props) {
   if (!data?.data.questions) {
     return <div>No questions available.</div>;
   }
-
+  console.log(user);
   return (
     <>
       <QuizQuestion
@@ -113,7 +126,7 @@ export default function QuizPage({ setCurrentPage }: Props) {
           <DialogHeader>
             <DialogTitle>Level {level} Completed!</DialogTitle>
             <DialogDescription>
-              Congratulations! You've completed level {level}.
+              Congratulations! You've completed level {level}. <br />
               {user
                 ? " Ready for the next challenge?"
                 : " Log in to continue your progress!"}
@@ -125,8 +138,8 @@ export default function QuizPage({ setCurrentPage }: Props) {
                 Continue to Level {level + 1}
               </Button>
             ) : (
-              <Button asChild>
-                <Link href="/auth/login">Log In to Continue</Link>
+              <Button onClick={handleLoginToContinue}>
+                Log In to Continue
               </Button>
             )}
           </DialogFooter>

@@ -8,9 +8,12 @@ interface QuizState {
   startTime: number | null;
   endTime: number | null;
   isCompleted: boolean;
+  isRedireted: boolean;
   setLevel: (level: number) => void;
+  setIsRedirected: (isRedirected: boolean) => void;
   incrementCorrectAnswers: () => void;
   incrementQuestionCount: () => void;
+  setQuestionCount: (count: number) => void;
   setIsCompleted: () => void;
   setStartTime: () => void;
   setEndTime: () => void;
@@ -21,6 +24,7 @@ export const useQuizStore = create<QuizState>()(
   persist(
     (set) => ({
       level: 1,
+      isRedireted: false,
       correctAnswers: 0,
       questionCount: 0,
       startTime: null,
@@ -34,6 +38,8 @@ export const useQuizStore = create<QuizState>()(
       setStartTime: () => set({ startTime: Date.now() }),
       setEndTime: () => set({ endTime: Date.now() }),
       setIsCompleted: () => set({ isCompleted: true }),
+      setIsRedirected: (isRedirected) => set({ isRedireted: isRedirected }),
+      setQuestionCount: (count) => set({ questionCount: count }),
       resetQuiz: () =>
         set({
           level: 1,

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "@/lib/api/requests/user.requests";
+import { useQuizStore } from "@/store/quiz-store";
 
 export default function LoginForm({
   setShowOtpForm,
@@ -19,6 +20,7 @@ export default function LoginForm({
 }) {
   const { showToast } = useToast();
   const router = useRouter();
+  const { isRedireted } = useQuizStore();
   const {
     register,
     handleSubmit,
@@ -35,7 +37,11 @@ export default function LoginForm({
         showToast(data?.message || "Something went wrong !", "error");
       }
       if (data?.success) {
-        router.push("/admin/dashboard");
+        if (isRedireted) {
+          router.push("/quiz");
+        } else {
+          router.push("/");
+        }
       }
     },
     onError: (error) => {

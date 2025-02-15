@@ -2,12 +2,14 @@ import React from "react";
 import { State } from "../page";
 import { ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuizStore } from "@/store/quiz-store";
 
 interface Props {
   setCurrentPage: React.Dispatch<React.SetStateAction<State>>;
 }
 
 const QuizLanding = ({ setCurrentPage }: Props) => {
+  const { isRedireted, setIsRedirected } = useQuizStore();
   return (
     <section className="bg-gray-50">
       <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
@@ -31,10 +33,11 @@ const QuizLanding = ({ setCurrentPage }: Props) => {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button
               onClick={() => {
+                setIsRedirected(false);
                 setCurrentPage("quiz");
               }}
             >
-              Get Started
+              {isRedireted ? "Continue Quiz" : "Start Quiz"}
             </Button>
             <Button
               variant={"outline"}
